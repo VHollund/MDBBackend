@@ -34,6 +34,11 @@ def update_data():
     update_rating()
 
 
+@app.route('/')
+def index():
+    return "<h1>Please ignore this url, school project</h1>"
+
+
 @app.route('/QueryCredits')
 def get_by_actor_name():
     query=request.json
