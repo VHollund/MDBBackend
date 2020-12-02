@@ -2,9 +2,7 @@ from flask import *
 from flask_restful import Resource, Api
 import pymongo
 from bson.json_util import dumps
-from json import load, loads
-import requests
-import atexit
+from TMDBNeo4j import Neo4jConn
 from apscheduler.schedulers.background import BackgroundScheduler
 
 
@@ -49,6 +47,13 @@ def get_movies():
     a_list = movies.find(query)
     return dumps(a_list), 200
 
+@app.route('/neo4j/query')
+def query_neo4j():
+    query = request.json['query']
+    neo4j = Neo4jConn("bolt://v-hollund.no:7687", "neo4j", "dbiola")
+    results = neo4j.query(query)
+    neo4j.close()
+    return dumps(results), 200
 
 
 if __name__ == '__main__':
