@@ -2,8 +2,8 @@ from flask import *
 from flask_restful import Resource, Api
 import pymongo
 from bson.json_util import dumps
-from TMDBNeo4j import Neo4jConn
-from apscheduler.schedulers.background import BackgroundScheduler
+from app.TMDBNeo4j import Neo4jConn
+
 
 
 app = Flask(__name__, template_folder='templates')
@@ -55,9 +55,3 @@ def query_neo4j():
     neo4j.close()
     return dumps(results), 200
 
-
-if __name__ == '__main__':
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(func=update_data, trigger="interval", seconds=86400)
-    scheduler.start()
-    app.run(debug=True, port=5002)
