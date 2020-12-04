@@ -25,13 +25,15 @@ def update_mongo(new_data):
 
 
 def update_neo4j(new_data):
-    neo4j = Neo4jConn("bolt://v-hollund.no:7687", "neo4j", "dbiola")
-    for x in new_data:
-        results = neo4j.query("MATCH p=(m:Movie { movieID: toString(%i)}) SET m.voteAverage = toString(%i) "
-                              "SET m.voteCount=toString(%i) return p" % (x[0], x[1][1], x[1][0]))
-        print(f"Neo4j: updated movie {x[0]}")
-    neo4j.close()
-
+    try:
+        neo4j = Neo4jConn("bolt://v-hollund.no:7687", "neo4j", "dbiola")
+        for x in new_data:
+            results = neo4j.query("MATCH p=(m:Movie { movieID: toString(%i)}) SET m.voteAverage = toString(%i) "
+                                  "SET m.voteCount=toString(%i) return p" % (x[0], x[1][1], x[1][0]))
+            print(f"Neo4j: updated movie {x[0]}")
+        neo4j.close()
+    except:
+        print("Unable to connect to neo4j server")
 
 def update_data():
     id=[]
@@ -67,9 +69,12 @@ def get_movies():
 
 @app.route('/neo4j/query')
 def query_neo4j():
-    query = request.json['query']
-    neo4j = Neo4jConn("bolt://v-ddhollund.no:7687", "neo4j", "dbiola")
-    results = neo4j.query(query)
-    neo4j.close()
-    return dumps(results), 200
+    try:
+        query = request.json['query']
+        neo4j = Neo4jConn("bolt://v-ddhollund.no:7687", "neo4j", "dbiola")
+        results = neo4j.query(query)
+        neo4j.close()
+        return dumps(results), 200
+    except:
+        return "Unable to connect to neo4j server"
 
