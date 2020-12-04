@@ -33,7 +33,7 @@ def update_neo4j(new_data):
     neo4j.close()
 
 
-def update_data(new_data):
+def update_data():
     id=[]
     new_data = {}
     print("Update Starting")
@@ -68,7 +68,7 @@ def get_movies():
 @app.route('/neo4j/query')
 def query_neo4j():
     query = request.json['query']
-    neo4j = Neo4jConn("bolt://v-hollund.no:7687", "neo4j", "dbiola")
+    neo4j = Neo4jConn("bolt://v-ddhollund.no:7687", "neo4j", "dbiola")
     results = neo4j.query(query)
     neo4j.close()
     return dumps(results), 200
