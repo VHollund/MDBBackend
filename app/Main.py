@@ -30,6 +30,8 @@ def update_neo4j(new_data):
         results = neo4j.query("MATCH p=(m:Movie { movieID: toString(%i)}) SET m.voteAverage = toString(%i) "
                               "SET m.voteCount=toString(%i) return p" % (x[0], x[1][1], x[1][0]))
         print(f"Neo4j: updated movie {x[0]}")
+    neo4j.close()
+
 
 def update_data(new_data):
     id=[]
