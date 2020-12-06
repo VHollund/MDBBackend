@@ -4,7 +4,7 @@ import pymongo
 from bson.json_util import dumps
 from app.TMDBNeo4j import Neo4jConn
 import requests as req
-
+from ADBmongo import update_ADB
 
 app = Flask(__name__, template_folder='templates')
 api = Api(app)
@@ -28,6 +28,7 @@ def update_mongo(new_data):
             "budget": f"{x[0][3]}"}}
         )
         print(f"MongoDB: updated movie {x[0]}")
+    update_ADB(movies)
 
 
 def update_neo4j(new_data):
@@ -53,6 +54,7 @@ def update_neo4j(new_data):
     except:
         print("Unable to connect to neo4j server")
 
+
 def update_data():
     id=[]
     new_data = {}
@@ -64,6 +66,7 @@ def update_data():
         new_data[res.json()['id']] = (res.json()['vote_count'], res.json()['vote_average'], res.json()["revenue"], res.json()["budget"])
     update_mongo(new_data)
     update_neo4j(new_data)
+
 
 def update_adb():
     print("ADB update Starting")
@@ -89,16 +92,18 @@ def get_movies():
 
 
 @app.route('/QueryAdb')
-def get_movies():
+def query_adb():
     query=request.json
     a_list = adb.find(query)
     return dumps(a_list), 200
 
+
 @app.route('/AggregateAdb')
-def get_movies():
-    query=request.json
+def aggregate_adb():
+    query = request.json
     a_list = adb.aggregate(query)
     return dumps(a_list), 200
+
 
 @app.route('/neo4j/query')
 def query_neo4j():
