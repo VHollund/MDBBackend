@@ -104,6 +104,7 @@ def query_adb():
 @app.route('/AggregateAdb', methods=['POST'])
 def aggregate_adb():
     query = request.json
+    print(query)
     a_list = adb.aggregate(query)
     return dumps(a_list), 200
 
