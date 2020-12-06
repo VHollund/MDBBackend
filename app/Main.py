@@ -20,7 +20,12 @@ credits = mydb["credits"]
 def update_mongo(new_data):
     new_data = request.get()
     for x in new_data:
-        movies.update({"id": x[0]}, {"$set": {"vote_count": f"{x[1][0]}", "vote_average": f"{x[0][1]}"}})
+        movies.update({"id": x[0]}, {"$set": {
+            "vote_count": f"{x[1][0]}",
+            "vote_average": f"{x[0][1]}",
+            "revenue": f"{x[0][2]}",
+            "budget": f"{x[0][3]}"}}
+        )
         print(f"MongoDB: updated movie {x[0]}")
 
 
@@ -28,9 +33,21 @@ def update_neo4j(new_data):
     try:
         neo4j = Neo4jConn("bolt://v-hollund.no:7687", "neo4j", "dbiola")
         for x in new_data:
-            results = neo4j.query("MATCH p=(m:Movie { movieID: toString(%i)}) SET m.voteAverage = toString(%i) "
-                                  "SET m.voteCount=toString(%i) return p" % (x[0], x[1][1], x[1][0]))
+            results = neo4j.query("MATCH p=(m:Movie { movieID: toString(%i)}) "
+                                  "SET m.voteAverage = toString(%i) "
+                                  "SET m.voteCount=toString(%i) "
+                                  "SET m.revenue=toString(%i) "
+                                  "SET m.budget=toString(%i) "
+                                  "return p" % (x[0], x[1][1], x[1][0], x[1][2], x[1][3]))
             print(f"Neo4j: updated movie {x[0]}")
+            results = neo4j.query("Match (m:Movie)"
+                                  "match (d:DimMovie {movieID:m.movieID})"
+                                  "set d.rating = m.voteAverage"
+                                  "set d.voteCount = m.voteCount"
+                                  "Match (d)-[:is]->(factRevenue:FactRevenue)"
+                                  "set factRevenue.releaseDate=m.releaseDate"
+                                  "set factRevenue.revenue=m.revenue"
+                                  "set factRevenue.budget=m.budget")
         neo4j.close()
     except:
         print("Unable to connect to neo4j server")
@@ -43,10 +60,12 @@ def update_data():
         id.append(x['id'])
     for x in id:
         res = req.get(f"https://api.themoviedb.org/3/movie/{x}?api_key=0edacbafa803b562070aa4928160edbf")
-        new_data[res.json()['id']] = (res.json()['vote_count'], res.json()['vote_average'])
+        new_data[res.json()['id']] = (res.json()['vote_count'], res.json()['vote_average'], res.json()["revenue"], res.json()["budget"])
     update_mongo(new_data)
     update_neo4j(new_data)
 
+def update_adb():
+    print("ADB update Starting")
 
 
 @app.route('/')
