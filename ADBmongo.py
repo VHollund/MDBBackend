@@ -15,22 +15,26 @@ adb = mydb["adb"]
 
 
 def insert_into_ADB():
-    g = []
-    pcountry = []
-    pcompany = []
     mov = []
     for x in movies.find():
-        g.append(x["genre"])
-        pcountry.append(x["production_countries"])
-        pcompany.append(x[pcompany])
+        g = []
+        pcountry = []
+        pcompany = []
+        for z in x["genres"]:
+            g.append(z["name"])
+        for z in x["production_countries"]:
+            pcountry.append(z["iso_3166_1"])
+        for z in x["production_companies"]:
+            pcompany.append(z["name"])
         mov.append({
             "id": x["id"],
+            "DimGenre": g,
+            "DimCountry": pcountry,
+            "DimCompany": pcompany,
             "budget": x["budget"],
             "revenue": x["revenue"],
             "vote_average": x["vote_average"],
             "vote_count": x["vote_count"]
         })
-    g = set(g)
-    pcompany = set(pcompany)
-    pcountry = set(pcountry)
+    adb.insert_many(mov)
 

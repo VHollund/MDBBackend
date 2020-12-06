@@ -15,6 +15,7 @@ myclient = pymongo.MongoClient("mongodb+srv://xiado:123@cluster0.m5jhq.mongodb.n
 mydb = myclient["tmdb"]
 movies = mydb["movies"]
 credits = mydb["credits"]
+adb = mydb["adb"]
 
 
 def update_mongo(new_data):
@@ -84,6 +85,19 @@ def get_by_actor_name():
 def get_movies():
     query=request.json
     a_list = movies.find(query)
+    return dumps(a_list), 200
+
+
+@app.route('/QueryAdb')
+def get_movies():
+    query=request.json
+    a_list = adb.find(query)
+    return dumps(a_list), 200
+
+@app.route('/AggregateAdb')
+def get_movies():
+    query=request.json
+    a_list = adb.aggregate(query)
     return dumps(a_list), 200
 
 @app.route('/neo4j/query')
