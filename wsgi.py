@@ -2,6 +2,7 @@ from app.Main import app, update_data
 from apscheduler.schedulers.background import BackgroundScheduler
 from ADBmongo import insert_into_ADB
 
+
 if __name__ == '__main__':
     #insert_into_ADB()
     scheduler = BackgroundScheduler()

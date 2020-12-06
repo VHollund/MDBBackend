@@ -5,9 +5,12 @@ from bson.json_util import dumps
 from app.TMDBNeo4j import Neo4jConn
 import requests as req
 from ADBmongo import update_ADB
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__, template_folder='templates')
 api = Api(app)
+cors = CORS(app, origins="http://127.0.0.1:3000")
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 myclient = pymongo.MongoClient("mongodb+srv://xiado:123@cluster0.m5jhq.mongodb.net/MyDB?retryWrites=true&w=majority")
 
@@ -91,21 +94,21 @@ def get_movies():
     return dumps(a_list), 200
 
 
-@app.route('/QueryAdb', methods = ['POST'])
+@app.route('/QueryAdb', methods=['POST'])
 def query_adb():
     query=request.json
     a_list = adb.find(query)
     return dumps(a_list), 200
 
 
-@app.route('/AggregateAdb', methods = ['POST'])
+@app.route('/AggregateAdb', methods=['POST'])
 def aggregate_adb():
     query = request.json
     a_list = adb.aggregate(query)
     return dumps(a_list), 200
 
 
-@app.route('/neo4j/query',methods = ['POST'])
+@app.route('/neo4j/query',methods=['POST'])
 def query_neo4j():
     query = request.json['query']
     neo4j = Neo4jConn("bolt://v-hollund.no:7687", "neo4j", "dbiola")

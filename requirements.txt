@@ -37,3 +37,4 @@ pymongo==3.11.0
 pyzmq==19.0.2
 qtconsole==4.7.7
 requests==2.25.0
+Flask_Cors==3.0.9
