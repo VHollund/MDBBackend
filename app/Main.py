@@ -84,31 +84,31 @@ def get_by_actor_name():
     return dumps(a_list), 200
 
 
-@app.route('/QueryMovies')
+@app.route('/QueryMovies',methods = ['POST'])
 def get_movies():
     query=request.json
     a_list = movies.find(query)
     return dumps(a_list), 200
 
 
-@app.route('/QueryAdb')
+@app.route('/QueryAdb', methods = ['POST'])
 def query_adb():
     query=request.json
     a_list = adb.find(query)
     return dumps(a_list), 200
 
 
-@app.route('/AggregateAdb')
+@app.route('/AggregateAdb', methods = ['POST'])
 def aggregate_adb():
     query = request.json
     a_list = adb.aggregate(query)
     return dumps(a_list), 200
 
 
-@app.route('/neo4j/query')
+@app.route('/neo4j/query',methods = ['POST'])
 def query_neo4j():
     query = request.json['query']
-    neo4j = Neo4jConn("bolt://v-ddhollund.no:7687", "neo4j", "dbiola")
+    neo4j = Neo4jConn("bolt://v-hollund.no:7687", "neo4j", "dbiola")
     results = neo4j.query(query)
     neo4j.close()
     return dumps(results), 200
