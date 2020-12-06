@@ -1,7 +1,7 @@
 from flask import *
 from flask_restful import Resource, Api
 import pymongo
-from bson.json_util import dumps
+from bson.json_util import dumps,loads
 from app.TMDBNeo4j import Neo4jConn
 import requests as req
 from ADBmongo import update_ADB
@@ -9,7 +9,7 @@ from flask_cors import CORS, cross_origin
 
 app = Flask(__name__, template_folder='templates')
 api = Api(app)
-cors = CORS(app, origins="http://127.0.0.1:3000")
+cors = CORS(app, origins="*")
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 myclient = pymongo.MongoClient("mongodb+srv://xiado:123@cluster0.m5jhq.mongodb.net/MyDB?retryWrites=true&w=majority")
@@ -103,7 +103,8 @@ def query_adb():
 
 @app.route('/AggregateAdb', methods=['POST'])
 def aggregate_adb():
-    query = request.json
+    query = request.data
+    query = loads(query)
     print(query)
     a_list = adb.aggregate(query)
     return dumps(a_list), 200
