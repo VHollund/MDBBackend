@@ -107,12 +107,8 @@ def aggregate_adb():
 
 @app.route('/neo4j/query')
 def query_neo4j():
-    try:
-        query = request.json['query']
-        neo4j = Neo4jConn("bolt://v-ddhollund.no:7687", "neo4j", "dbiola")
-        results = neo4j.query(query)
-        neo4j.close()
-        return dumps(results), 200
-    except:
-        return "Unable to connect to neo4j server"
-
+    query = request.json['query']
+    neo4j = Neo4jConn("bolt://v-ddhollund.no:7687", "neo4j", "dbiola")
+    results = neo4j.query(query)
+    neo4j.close()
+    return dumps(results), 200
