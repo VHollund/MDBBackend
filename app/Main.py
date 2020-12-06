@@ -107,7 +107,9 @@ def aggregate_adb():
     query = loads(query)
     print(query)
     a_list = adb.aggregate(query)
-    return dumps(a_list), 200
+    response=app.make_response(dumps(a_list))
+    response.headers['Content-Type'] = 'application/json'
+    return response, 200
 
 
 @app.route('/neo4j/query',methods=['POST'])
